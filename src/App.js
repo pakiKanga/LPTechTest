@@ -1,33 +1,72 @@
 import React, { useState } from "react";
 import "./App.css";
 
-function processResult(result) {
-  console.log(result);
-  return "Unknown"
-}
-function validateAddress(location, setMessage) {
-  let {state, suburb, postcode} = location;
-  console.log(state, suburb, postcode);
-  var myHeaders = new Headers();
-  myHeaders.append('no-Control-Allow-Origin', '*')
-  myHeaders.append("Access-Control-Allow-Methods", 'HEAD, GET, POST, PUT, PATCH, DELETE');
-  myHeaders.append("Access-Control-Allow-Headers", 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With');
-  myHeaders.append("auth-key", "872608e3-4530-4c6a-a369-052accb03ca8");
+function processResult(postcodes, suburbAndPostcode, location) {
+  const { state, suburb, postcode } = location;
 
+  if (suburbAndPostcode.localities === "" && postcodes.localities === "") {
+    return `The suburb ${suburb} does not exist in the state ${state}`;
+  }
+
+  if (suburbAndPostcode.localities === "") {
+    return `The postcode ${postcode} does not match the suburb ${suburb}`;
+  }
+
+  let availablePostcodes = postcodes.localities.locality;
+  let selectedSuburbs = suburbAndPostcode.localities.locality;
+  console.log(availablePostcodes);
+  console.log(selectedSuburbs);
+
+  if (
+    !Array.isArray(availablePostcodes) &&
+    !Array.isArray(selectedSuburbs) &&
+    availablePostcodes.location === selectedSuburbs.location
+  ) {
+    return "The postcode, suburb and state entered are validre";
+  }
+
+  if (!Array.isArray(selectedSuburbs)) {
+    selectedSuburbs = [selectedSuburbs];
+  }
+
+  if (!Array.isArray(availablePostcodes)) {
+    availablePostcodes = [availablePostcodes]
+  }
+
+  for (let i = 0; i < availablePostcodes.length; i++) {
+    for (let j = 0; j < selectedSuburbs.length; j++) {
+      if (availablePostcodes[i].location === selectedSuburbs[j].location) {
+        return "The postcode, suburb and state entered are valid";
+      }
+    }
+  }
+
+  return `The suburb ${suburb} does not exist in the state ${state}`;
+}
+
+async function validateAddress(location, setMessage) {
+  const { state, suburb, postcode } = location;
+  var myHeaders = new Headers();
+  myHeaders.append("auth-key", "872608e3-4530-4c6a-a369-052accb03ca8");
 
   var requestOptions = {
     method: "GET",
     headers: myHeaders
   };
 
-  fetch(
-    "https://digitalapi.auspost.com.au/postcode/search.json?state=NSW&q=Ryde 2112",
-    requestOptions,
-   
-  )
-    .then(response => response.text())
-    .then(result => setMessage(processResult(result)))
-    .catch(error => console.log("error", error));
+  let postcodes = await fetch(
+    `https://digitalapi.auspost.com.au/postcode/search.json?state=${state}&q=${postcode}`,
+    requestOptions
+  );
+  postcodes = await postcodes.json();
+
+  let suburbAndPostcode = await fetch(
+    `https://digitalapi.auspost.com.au/postcode/search.json?state=${state}&q=${suburb} ${postcode}`,
+    requestOptions
+  );
+  suburbAndPostcode = await suburbAndPostcode.json();
+
+  setMessage(processResult(postcodes, suburbAndPostcode, location));
 }
 
 function App() {
@@ -35,7 +74,7 @@ function App() {
   const [validations, setValidation] = useState({
     suburb: false,
     postcode: false,
-    state: false
+    state: true
   });
   const [message, setMessage] = useState("");
 
@@ -57,7 +96,7 @@ function App() {
         return false;
       }
     }
-    setMessage("Contacting Postman Pat...");
+    setMessage("Contacting server... ");
     validateAddress(form, setMessage);
   };
 

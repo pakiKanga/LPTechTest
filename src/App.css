@@ -1,7 +1,5 @@
 .mainContainer {
   font-family: "Roboto";
-  width: 50vw;
-  height: 80vh;
   margin: 50px auto;
 }
 
@@ -21,7 +19,7 @@ placeholder {
 }
 
 label {
-  font-weight: bolder;
+  font-weight: 800;
   color: rgba(55, 71, 79, 1);
   padding-bottom: 5px;
 }
@@ -37,6 +35,9 @@ input {
   border-radius: 3px;
   padding-left: 10px;
   font-weight: 800;
+  color: rgba(55,71,79 ,1);
+  font-family: 'Roboto';
+  font-size: 16px;
 }
 
 button {
@@ -45,6 +46,7 @@ button {
   font-weight: 600;
   border: none;
   background-color: rgba(33, 150, 243, 1);
+  font-family: 'Open Sans';
   color: white;
   font-size: 18px;
 }
@@ -65,6 +67,11 @@ select {
   width: 360px;
   height: 40px;
   margin-bottom: 20px;
+  font-family: 'Roboto';
+  font-size: 16px;
+  color: rgba(55,71,79 ,1);
+
+  font-weight: 800;
 }
 
 .messageContainer {

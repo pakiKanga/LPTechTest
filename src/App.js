@@ -1,7 +1,33 @@
 import React, { useState } from "react";
 import "./App.css";
-function validateAddress(location) {
-  console.log(location);
+
+function processResult(result) {
+  console.log(result);
+  return "Unknown"
+}
+function validateAddress(location, setMessage) {
+  let {state, suburb, postcode} = location;
+  console.log(state, suburb, postcode);
+  var myHeaders = new Headers();
+  myHeaders.append('no-Control-Allow-Origin', '*')
+  myHeaders.append("Access-Control-Allow-Methods", 'HEAD, GET, POST, PUT, PATCH, DELETE');
+  myHeaders.append("Access-Control-Allow-Headers", 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With');
+  myHeaders.append("auth-key", "872608e3-4530-4c6a-a369-052accb03ca8");
+
+
+  var requestOptions = {
+    method: "GET",
+    headers: myHeaders
+  };
+
+  fetch(
+    "https://digitalapi.auspost.com.au/postcode/search.json?state=NSW&q=Ryde 2112",
+    requestOptions,
+   
+  )
+    .then(response => response.text())
+    .then(result => setMessage(processResult(result)))
+    .catch(error => console.log("error", error));
 }
 
 function App() {
@@ -19,20 +45,20 @@ function App() {
     setForm({ ...form, ...obj });
 
     let valid = {};
-    valid[event.target.name] = true
-    setValidation({...validations, ...valid});
-    console.log(form);
+    valid[event.target.name] = true;
+    setValidation({ ...validations, ...valid });
   };
 
   const handleSubmit = event => {
     event.preventDefault();
-    for (const [key,value] of Object.entries(validations)) {
+    for (const [, value] of Object.entries(validations)) {
       if (value === false) {
-        setMessage("Please fill in all fields.")
+        setMessage("Please fill in all fields.");
         return false;
       }
     }
-    validateAddress(form);
+    setMessage("Contacting Postman Pat...");
+    validateAddress(form, setMessage);
   };
 
   return (
@@ -74,12 +100,12 @@ function App() {
         <button onSubmit={handleSubmit} type="submit">
           Submit
         </button>
-
-
       </form>
-      <div className="messageContainer">
+      {message !== "" && (
+        <div className="messageContainer">
           <span className="resultText">{message}</span>
         </div>
+      )}
     </div>
   );
 }

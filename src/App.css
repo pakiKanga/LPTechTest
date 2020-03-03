@@ -3,7 +3,6 @@
   width: 50vw;
   height: 80vh;
   margin: 50px auto;
-  box-shadow: black;
 }
 
 .formContainer {
@@ -22,16 +21,16 @@ placeholder {
 
 label {
   font-weight: bolder;
-  color: rgba(55,71,79 ,1);
+  color: rgba(55, 71, 79, 1);
   padding-bottom: 5px;
 }
 
 input {
+  box-sizing: border-box;
   margin-bottom: 20px;
   background-color: rgba(207, 216, 220, 1);
   width: 360px;
   height: 40px;
-
   border: 0px;
   outline: 0px;
   border-radius: 3px;
@@ -43,10 +42,17 @@ button {
   height: 40px;
   font-weight: 600;
   border: none;
-  background-color: rgba(33,150,243 ,1);
+  background-color: rgba(33, 150, 243, 1);
   color: white;
   font-size: 18px;
 }
+
+button:hover {
+  background-color: rgba(13, 71, 161, 1);
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
 input::placeholder {
   font-weight: bolder;
 }
@@ -57,4 +63,14 @@ select {
   width: 360px;
   height: 40px;
   margin-bottom: 20px;
+}
+
+.messageContainer {
+  margin: 50px auto;
+  width: 560px;
+  height: 100px;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.14);
+  text-align: center;
+  line-height: 100px;
 }
